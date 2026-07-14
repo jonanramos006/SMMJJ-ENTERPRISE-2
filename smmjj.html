@@ -1,0 +1,209 @@
+<!--
+  SOLAR ENERGY — Futuristic Interactive Card
+  Paste this whole file into Google Sites via: Insert > Embed > Embed code
+  Replace PASTE_YOUR_IMAGE_URL_HERE with your hosted image URL
+-->
+<div class="solar-card" id="solarCard">
+  <img id="solarBg" class="solar-bg" src="AQUARIUM" alt="Clean Energy Brighter Tomorrow" />
+  <div class="solar-glow"></div>
+  <div class="solar-scanline"></div>
+  <div class="solar-particles" id="solarParticles"></div>
+  <a href="https://booklod.husayan.com/booking-form" class="solar-btn-hotspot" aria-label="Explore Solar Solutions">
+    <span class="solar-btn-ring"></span>
+  </a>
+</div>
+
+<style>
+  .solar-card {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    aspect-ratio: 1200 / 582;
+    margin: 0 auto;
+    border-radius: 22px;
+    overflow: hidden;
+    perspective: 1000px;
+    transform-style: preserve-3d;
+    box-shadow: 0 0 0 rgba(46,155,255,0);
+    transition: box-shadow 0.4s ease;
+    cursor: pointer;
+  }
+  .solar-card:hover,
+  .solar-card.active {
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(46,155,255,0.35);
+  }
+  .solar-bg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    transform: scale(1.02);
+    transition: transform 0.15s ease-out;
+    will-change: transform;
+  }
+
+  /* Cursor-following glow / spotlight */
+  .solar-glow {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    background: radial-gradient(
+      circle 220px at 50% 50%,
+      rgba(46,155,255,0.35),
+      rgba(46,155,255,0.08) 40%,
+      transparent 70%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    mix-blend-mode: screen;
+  }
+  .solar-card:hover .solar-glow,
+  .solar-card.active .solar-glow {
+    opacity: 1;
+  }
+
+  /* Futuristic scanning line */
+  .solar-scanline {
+    position: absolute;
+    left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(120,200,255,0.9), transparent);
+    box-shadow: 0 0 12px rgba(120,200,255,0.8);
+    top: -5%;
+    pointer-events: none;
+    animation: solarScan 4.5s linear infinite;
+    opacity: 0.85;
+  }
+  @keyframes solarScan {
+    0%   { top: -5%; }
+    100% { top: 105%; }
+  }
+
+  /* Floating light particles */
+  .solar-particles {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .solar-spark {
+    position: absolute;
+    bottom: -10px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: rgba(180, 220, 255, 0.9);
+    box-shadow: 0 0 8px 2px rgba(120,190,255,0.8);
+    animation-name: solarFloat;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    opacity: 0;
+  }
+  @keyframes solarFloat {
+    0%   { transform: translateY(0) translateX(0); opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 0.6; }
+    100% { transform: translateY(-380px) translateX(20px); opacity: 0; }
+  }
+
+  /* Clickable hotspot over the "EXPLORE SOLAR SOLUTIONS" button in the image */
+  .solar-btn-hotspot {
+    position: absolute;
+    left: 7.8%;
+    top: 78%;
+    width: 21%;
+    height: 8%;
+    border-radius: 40px;
+    display: block;
+    text-decoration: none;
+  }
+  .solar-btn-ring {
+    position: absolute;
+    inset: -6px;
+    border-radius: 46px;
+    border: 2px solid rgba(120,200,255,0);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  }
+  .solar-btn-hotspot:hover .solar-btn-ring {
+    border-color: rgba(120,200,255,0.9);
+    box-shadow: 0 0 18px rgba(46,155,255,0.7), inset 0 0 12px rgba(46,155,255,0.5);
+    transform: scale(1.05);
+  }
+  .solar-btn-hotspot:active .solar-btn-ring {
+    transform: scale(0.97);
+  }
+
+  @media (max-width: 480px) {
+    .solar-card { border-radius: 14px; }
+  }
+</style>
+
+<script>
+(function() {
+  var card = document.getElementById('solarCard');
+  var bg = document.getElementById('solarBg');
+  var glow = card.querySelector('.solar-glow');
+  var particlesWrap = document.getElementById('solarParticles');
+
+  // 3D tilt + glow follow (mouse)
+  function handleMove(x, y) {
+    var rect = card.getBoundingClientRect();
+    var relX = (x - rect.left) / rect.width;
+    var relY = (y - rect.top) / rect.height;
+
+    var rotateY = (relX - 0.5) * 10;
+    var rotateX = (0.5 - relY) * 8;
+    bg.style.transform = 'scale(1.06) rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg)';
+
+    glow.style.background =
+      'radial-gradient(circle 260px at ' + (relX * 100) + '% ' + (relY * 100) + '%, ' +
+      'rgba(46,155,255,0.4), rgba(46,155,255,0.08) 40%, transparent 70%)';
+  }
+
+  function resetTilt() {
+    bg.style.transform = 'scale(1.02) rotateX(0deg) rotateY(0deg)';
+  }
+
+  card.addEventListener('mousemove', function(e) {
+    card.classList.add('active');
+    handleMove(e.clientX, e.clientY);
+  });
+  card.addEventListener('mouseleave', function() {
+    card.classList.remove('active');
+    resetTilt();
+  });
+
+  // Touch support (mobile)
+  card.addEventListener('touchmove', function(e) {
+    if (e.touches && e.touches[0]) {
+      card.classList.add('active');
+      handleMove(e.touches[0].clientX, e.touches[0].clientY);
+    }
+  }, { passive: true });
+  card.addEventListener('touchend', function() {
+    card.classList.remove('active');
+    resetTilt();
+  });
+
+  // Floating particles
+  function spawnParticle() {
+    var s = document.createElement('div');
+    s.className = 'solar-spark';
+    var left = Math.random() * 100;
+    var size = 2 + Math.random() * 3;
+    var duration = 4 + Math.random() * 4;
+    var delay = Math.random() * 2;
+    s.style.left = left + '%';
+    s.style.width = size + 'px';
+    s.style.height = size + 'px';
+    s.style.animationDuration = duration + 's';
+    s.style.animationDelay = delay + 's';
+    particlesWrap.appendChild(s);
+    setTimeout(function() { s.remove(); }, (duration + delay) * 1000 + 200);
+  }
+  setInterval(spawnParticle, 350);
+  for (var i = 0; i < 12; i++) { setTimeout(spawnParticle, i * 150); }
+})();
+</script>
